@@ -13,7 +13,7 @@ passPBS="Password"
 ignoreVM=""
 
 # Directories to include in backup that is excluded by default. Separate each full path by space, example: includeDIR="/config /etc/pve"
-includeDIR="/config /etc/pve"
+includeDIR=""
 
 ###########################
 
