@@ -6,6 +6,9 @@ ipPBS="x.x.x.x"
 # Backup server (PBS) repository
 repPBS="datastore_name"
 
+# Backup server (PBS) user
+userPBS="user"
+
 # Backup server (PBS) password
 passPBS="Password"
 
@@ -54,7 +57,7 @@ function backup {
 	echo "Backing up.."
 	export PBS_REPOSITORY="$ipPBS":"$repPBS"
 	export PBS_PASSWORD="$passPBS"
-	proxmox-backup-client backup root.pxar:/ $(sed -e 's/[[:space:]]/ --include-dev /' -e '0,/\// s/\//--include-dev \//' <<< $includeDIR)
+	proxmox-backup-client backup "$userPBS".pxar:/ $(sed -e 's/[[:space:]]/ --include-dev /' -e '0,/\// s/\//--include-dev \//' <<< $includeDIR)
 }
 
 function startservices {
