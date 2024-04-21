@@ -29,15 +29,15 @@ function check-if-root {
 function stopservices {
 	# scan for running VM's and store result in an array
 	echo "Scanning for VM's status..."
-	mapfile -t runningVM < <(pvesh get /cluster/resources --type vm --human-readable --noborder |
-	awk '(NR!=1)' | awk '{printf "%s\n",$1" "$15}' |
+	mapfile -t runningVM < <(pvesh get /cluster/resources --type vm --human-readable --noborder --noheader |
+	awk '{printf "%s\n",$1" "$15}' |
 	sed -e 's/lxc\//\/usr\/sbin\/pct /g' -e 's/qemu\//\/usr\/sbin\/qm /g' |
 	awk '{t=$2;$2=$3;$3=t;print;}' |
 	grep 'running')
 
 	# print out the status of all VM's
-	echo "$(pvesh get /cluster/resources --type vm --human-readable --noborder |
-	awk '(NR!=1)' | awk '{printf "%s\n","Container"" "$1"["$2"] ""named"" ["$13"] ""is"" "$15}' |
+	echo "$(pvesh get /cluster/resources --type vm --human-readable --noborder --noheader |
+	awk '{printf "%s\n","Container"" "$1"["$2"] ""named"" ["$13"] ""is"" "$15}' |
 	sed -e 's/lxc\//ID /g' -e 's/qemu\//ID /g')"
 
 	# shutdown the running VM's
@@ -46,8 +46,8 @@ function stopservices {
 	for i in "${runningVM[@]}"; do echo $i | grep -vE "$ignoreVM" | sed -e 's/running/shutdown/g' | /bin/sh & done
 
 	# wait for all VM's to shutdown
-	while grep 'running' <<< $(pvesh get /cluster/resources --type vm --human-readable --noborder |
-	awk '(NR!=1)' | grep -vE "$ignoreVM" | awk '{printf "%s\n", $15}') > /dev/null; do
+	while grep 'running' <<< $(pvesh get /cluster/resources --type vm --human-readable --noborder --noheader |
+	grep -vE "$ignoreVM" | awk '{printf "%s\n", $15}') > /dev/null; do
 	sleep 1
 	done
 }
